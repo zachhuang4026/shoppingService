@@ -23,12 +23,18 @@ public class RPCClient implements AutoCloseable {
 
     public static void main(String[] argv) {
         try (RPCClient rpc = new RPCClient()) {
-            // String message = "{\"type\": \"getShoppingCart\", \"userId\": \"12345\"}";
-            String message = "{\"type\": \"addToShoppingCart\", \"userId\": \"1234\", \"itemId\": \"5678\"}";
-            System.out.println(" [x] Requesting " + message);
-            String response = rpc.call(message);
-            System.out.println(" [.] Got '" + response + "'");
-        
+            
+            String getMsg = "{\"type\": \"getShoppingCart\", \"userId\": \"1234\"}";
+            String checkoutMsg = "{\"type\": \"checkout\", \"userId\": \"1234\"}";
+            String addMsg = "{\"type\": \"addToShoppingCart\", \"userId\": \"1234\", \"itemId\": \"5678\"}";
+            String deleteMsg = "{\"type\": \"deleteFromShoppingCart\", \"userId\": \"1234\", \"itemId\": \"5678\"}";
+
+            String[] messages = {addMsg, getMsg, deleteMsg, getMsg, addMsg, checkoutMsg, getMsg};
+            for (String message : messages) {
+                System.out.println(" [x] Requesting " + message);
+                String response = rpc.call(message);
+                System.out.println(" [.] Got '" + response + "'");
+            }
         } catch (IOException | TimeoutException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

@@ -1,7 +1,10 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.rabbitmq.client.*;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -70,6 +73,13 @@ public class RPCServer {
             if (type.contains("get")) {
                 query = "SELECT itemid FROM "+tableName+" WHERE userid='"+userId+"';";
                 rs = stmt.executeQuery(query);
+                List<String> list = new ArrayList<String>();
+                while (rs.next()) {
+                    String res = rs.getString("itemid");
+                    list.add(res);
+                }
+                return "{\"success\": true, \"itemId\": "+JSONArray.toJSONString(list)+"}";
+
             } else if (type.contains("add")) {
                 String id = UUID.randomUUID().toString();
                 query = "INSERT INTO "+tableName+" (id, userid, itemid) VALUES ('"+id+"','"+ userId +"','"+ itemId +"');";
@@ -81,9 +91,23 @@ public class RPCServer {
                     return "{\"success\": false}";
                 }
             } else if (type.contains("delete")) {
-    
+                query = "DELETE FROM "+tableName+" WHERE userid='"+userId+"' AND itemid='"+itemId+"';";
+                try {
+                    stmt.executeUpdate(query);
+                    return "{\"success\": true}";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return "{\"success\": false}";
+                }
             } else {  // checkout
-    
+                query = "DELETE FROM "+tableName+" WHERE userid='"+userId+"';";
+                try {
+                    stmt.executeUpdate(query);
+                    return "{\"success\": true}";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return "{\"success\": false}";
+                }
             }
         } catch (Exception e) {
 			e.printStackTrace();
@@ -119,9 +143,6 @@ public class RPCServer {
                 String message = new String(delivery.getBody(), "UTF-8");
                 System.out.println(" [x] Receiving " + message);
                 response += process(message);
-
-                // int n = Integer.parseInt(message);
-
             } catch (RuntimeException e) {
                 System.out.println(" [.] " + e);
             } finally {
