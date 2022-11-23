@@ -23,7 +23,8 @@ public class RPCClient implements AutoCloseable {
 
     public static void main(String[] argv) {
         try (RPCClient rpc = new RPCClient()) {
-            String message = "{\"type\": \"getShoppingCart\", \"user_id\": \"12345\"}";
+            // String message = "{\"type\": \"getShoppingCart\", \"userId\": \"12345\"}";
+            String message = "{\"type\": \"addToShoppingCart\", \"userId\": \"1234\", \"itemId\": \"5678\"}";
             System.out.println(" [x] Requesting " + message);
             String response = rpc.call(message);
             System.out.println(" [.] Got '" + response + "'");
