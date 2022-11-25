@@ -25,7 +25,7 @@ public class RPCServer {
 			System.out.println("calling Class.forName()");
 			Class.forName("org.postgresql.Driver");
 			System.out.println("building connection string");
-			String connectionUrl = "jdbc:postgresql://172.17.0.3:5432/shopping";
+			String connectionUrl = "jdbc:postgresql://localhost/shopping";
 			String connectionUser = "postgres";
 			String connectionPassword = "mysecret";
 			System.out.println("calling getConnection");
@@ -121,7 +121,7 @@ public class RPCServer {
 
     public static void main(String[] argv) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("172.17.0.2");
+        factory.setHost(argv[0]);
 
         com.rabbitmq.client.Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();

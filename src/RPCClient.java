@@ -13,16 +13,16 @@ public class RPCClient implements AutoCloseable {
     private Channel channel;
     private String requestQueueName = "rpc_queue";
 
-    public RPCClient() throws IOException, TimeoutException {
+    public RPCClient(String hostIp) throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("172.17.0.2");
+        factory.setHost(hostIp);
 
         connection = factory.newConnection();
         channel = connection.createChannel();
     }
 
     public static void main(String[] argv) {
-        try (RPCClient rpc = new RPCClient()) {
+        try (RPCClient rpc = new RPCClient(argv[0])) {
             
             String getMsg = "{\"type\": \"getShoppingCart\", \"userId\": \"1234\"}";
             String checkoutMsg = "{\"type\": \"checkout\", \"userId\": \"1234\"}";
